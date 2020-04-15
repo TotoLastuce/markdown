@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import './App.css';
+
+import marked from 'marked'
+
 import { sampleText } from './sampleText'
 
 class App extends Component {
@@ -7,9 +10,32 @@ class App extends Component {
     text: sampleText
   }
 
+  componentDidMount () {
+    // console.log('Je suis monté')
+    const text = localStorage.getItem('text')
+    this.setState({ text })
+    if (text) {
+      this.setState({ text })
+    } else {
+      this.setState({ text: sampleText })
+    }
+  }
+
+  componentDidUpdate () {
+    // console.log('Je suis mis à jour')
+    // const text = this.state.text
+    const { text } = this.state
+    localStorage.setItem('text', text)
+  }
+
   handleChange = event => {
     const text = event.target.value
     this.setState({ text })
+  }
+
+  renderText = text => {
+    const __html = marked(text, { sanitize: true })
+    return { __html }
   }
 
   render () {
@@ -24,7 +50,7 @@ class App extends Component {
             rows='35' />
           </div>
           <div className="col-sm-6">
-            { sampleText }
+            <div dangerouslySetInnerHTML={this.renderText(this.state.text)} />
           </div>
         </div>
       </div>
